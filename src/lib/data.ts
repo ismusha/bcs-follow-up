@@ -154,7 +154,7 @@ export function useDeleteAppointment() {
 export function useSaveCleaner() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (c: Partial<Cleaner> & { name: string }) => {
+    mutationFn: async (c: { id?: string | undefined; name: string; phone?: string | null; email?: string | null; notes?: string | null }) => {
       const row = { name: c.name.trim(), phone: c.phone || null, email: c.email || null, notes: c.notes || null };
       const { error } = c.id
         ? await supabase.from("cleaners").update(row).eq("id", c.id)

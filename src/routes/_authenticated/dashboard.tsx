@@ -83,7 +83,7 @@ function Dashboard() {
   );
 }
 
-function List({ items, cleaners, empty, showDate }: { items: ReturnType<typeof useAppointments>["data"] & {}; cleaners: ReturnType<typeof useCleaners>["data"] & {}; empty: string; showDate?: boolean }) {
+function List({ items, cleaners, empty, showDate }: { items: ReturnType<typeof useAppointments>["data"] & {}; cleaners: ReturnType<typeof useCleaners>["data"] & {}; empty: string; showDate?: boolean | undefined }) {
   const { open } = useAppointmentEditor();
   if (!items.length)
     return (

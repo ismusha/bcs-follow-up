@@ -4,7 +4,7 @@ import { hhmm, type Appointment, type Cleaner } from "@/lib/data";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useAppointmentEditor } from "@/components/AppointmentEditor";
 
-export function AppointmentCard({ a, cleaners, showDate }: { a: Appointment; cleaners: Cleaner[]; showDate?: boolean }) {
+export function AppointmentCard({ a, cleaners, showDate }: { a: Appointment; cleaners: Cleaner[]; showDate?: boolean | undefined }) {
   const { open } = useAppointmentEditor();
   const names = a.cleaner_ids.map((id) => cleaners.find((c) => c.id === id)?.name).filter(Boolean).join(", ");
   return (
