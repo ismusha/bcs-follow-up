@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, Sparkles, Users, X } from "lucide-react";
+import { CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, Sparkles, UserPlus, Users, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const NAV = [
   { to: "/schedule", label: "Cleaning Schedule", icon: ClipboardList },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/cleaners", label: "Cleaners", icon: Users },
+  { to: "/users", label: "Staff Accounts", icon: UserPlus },
 ] as const;
 
 export function Brand({ light }: { light?: boolean }) {
