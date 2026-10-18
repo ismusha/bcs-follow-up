@@ -82,7 +82,7 @@ function AuthPage() {
             <div className="mb-6 grid h-12 w-12 place-items-center rounded-xl bg-sky-soft text-primary"><Lock className="h-6 w-6" /></div>
             <h2 className="text-2xl font-bold">Staff sign in</h2>
             <p className="mt-1 text-sm text-muted-foreground">Use the account the company owner created for you.</p>
-            {mode !== "done" && <div className="mt-6 grid gap-4">
+            <div className="mt-6 grid gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />

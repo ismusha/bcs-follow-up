@@ -16,6 +16,7 @@ import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCleanersRouteImport } from './routes/_authenticated/cleaners'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +52,11 @@ const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/users': typeof AuthenticatedUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/users': typeof AuthenticatedUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,13 +85,27 @@ export interface FileRoutesById {
   '/_authenticated/cleaners': typeof AuthenticatedCleanersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/calendar' | '/cleaners' | '/dashboard' | '/schedule'
+    | '/'
+    | '/auth'
+    | '/calendar'
+    | '/cleaners'
+    | '/dashboard'
+    | '/schedule'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/calendar' | '/cleaners' | '/dashboard' | '/schedule'
+  to:
+    | '/'
+    | '/auth'
+    | '/calendar'
+    | '/cleaners'
+    | '/dashboard'
+    | '/schedule'
+    | '/users'
   id:
     | '__root__'
     | '/'
@@ -93,6 +115,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cleaners'
     | '/_authenticated/dashboard'
     | '/_authenticated/schedule'
+    | '/_authenticated/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,6 +175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScheduleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -160,6 +190,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCleanersRoute: typeof AuthenticatedCleanersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -167,6 +198,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCleanersRoute: AuthenticatedCleanersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
