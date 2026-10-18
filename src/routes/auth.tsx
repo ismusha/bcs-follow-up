@@ -63,8 +63,6 @@ function AuthPage() {
     }
   }
 
-  const isSetup = mode === "setup";
-
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between bg-hero p-12 text-navy-foreground lg:flex">
@@ -93,7 +91,7 @@ function AuthPage() {
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" size="lg" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
-            </div>}
+            </div>
           </form>
         ) : (
           <form onSubmit={onSetup} className="w-full max-w-sm">
