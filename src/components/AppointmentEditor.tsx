@@ -153,6 +153,17 @@ function AppointmentDialog({
               </Popover>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid min-w-0 gap-1.5">
+              <Label htmlFor="assignment-start">Start time</Label>
+              <Input id="assignment-start" type="time" className="min-w-0" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} />
+            </div>
+            <div className="grid min-w-0 gap-1.5">
+              <Label htmlFor="assignment-finish">Finish time</Label>
+              <Input id="assignment-finish" type="time" className="min-w-0" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} />
+            </div>
+          </div>
+
           <div className="grid gap-1.5">
             <Label htmlFor="loc">Location</Label>
             <Input id="loc" list="loc-list" placeholder="e.g. ECA" maxLength={200} value={f.location} onChange={(e) => set("location", e.target.value)} />

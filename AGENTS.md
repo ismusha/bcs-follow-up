@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep assignment-form validation in a browser-safe helper shared with tests, so the four-field internal record can be validated independently of legacy scheduling fields.
+- Keep assignment-form validation in a browser-safe helper shared with tests, so internal assignment inputs are validated independently of the persistence layer.
