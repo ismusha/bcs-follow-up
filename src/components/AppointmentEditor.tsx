@@ -13,10 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { validateAssignment } from "@/lib/assignment";
 import {
-  STATUSES, TASK_OPTIONS, findConflicts, hhmm, useAppointments, useCleaners, useDeleteAppointment,
+  findConflicts, hhmm, useAppointments, useCleaners, useDeleteAppointment,
   useLocations, useSaveAppointment, type Appointment, type AppointmentInput,
 } from "@/lib/data";
 
@@ -65,7 +65,7 @@ export function AppointmentEditorProvider({ children }: { children: ReactNode })
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this appointment?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this cleaning assignment?</AlertDialogTitle>
             <AlertDialogDescription>
               {toDelete && `${toDelete.location} on ${format(parseISO(toDelete.date), "PPP")}. `}
               This cannot be undone.
@@ -79,7 +79,7 @@ export function AppointmentEditorProvider({ children }: { children: ReactNode })
                 if (!toDelete) return;
                 try {
                   await del.mutateAsync(toDelete.id);
-                  toast.success("Appointment deleted");
+                  toast.success("Cleaning assignment deleted");
                   setDraft(null);
                 } catch (e) {
                   toast.error((e as Error).message);
@@ -112,20 +112,13 @@ function AppointmentDialog({
   const toggle = (list: string[], v: string) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
   async function submit() {
-    const errs: string[] = [];
-    if (!f.date) errs.push("Choose a date.");
-    if (!f.location.trim()) errs.push("Enter a location.");
-    if (f.location.length > 200) errs.push("Location is too long.");
-    if (!f.start_time || !f.end_time) errs.push("Set start and end time.");
-    else if (f.end_time <= f.start_time) errs.push("End time must be after start time.");
-    if (f.cleaner_ids.length === 0) errs.push("Assign at least one cleaner.");
-    if (f.remark.length > 2000) errs.push("Remark is too long (max 2000 characters).");
+    const errs = validateAssignment(f);
     if (conflicts.length) errs.push("Resolve the scheduling conflicts below.");
     setErrors(errs);
     if (errs.length) return;
     try {
       await save.mutateAsync(f);
-      toast.success(f.id ? "Appointment updated" : "Appointment created");
+      toast.success(f.id ? "Cleaning assignment updated" : "Cleaning assignment created");
       onClose();
     } catch (e) {
       toast.error((e as Error).message);
@@ -136,16 +129,15 @@ function AppointmentDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{f.id ? "Edit appointment" : "New appointment"}</DialogTitle>
+          <DialogTitle>{f.id ? "Edit cleaning assignment" : "Cleaning Assignment Form"}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="grid gap-1.5 sm:col-span-1">
-              <Label>Date</Label>
+          <div className="grid gap-1.5">
+              <Label htmlFor="assignment-date">Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="justify-start font-normal">
+                  <Button id="assignment-date" variant="outline" className="justify-start font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {f.date ? format(parseISO(f.date), "MMM d, yyyy") : "Pick date"}
                   </Button>
@@ -159,15 +151,6 @@ function AppointmentDialog({
                   />
                 </PopoverContent>
               </Popover>
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="st">Start time</Label>
-              <Input id="st" type="time" value={f.start_time} onChange={(e) => set("start_time", e.target.value)} />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="et">End time</Label>
-              <Input id="et" type="time" value={f.end_time} onChange={(e) => set("end_time", e.target.value)} />
-            </div>
           </div>
 
           <div className="grid gap-1.5">
@@ -178,28 +161,29 @@ function AppointmentDialog({
             </datalist>
           </div>
 
-          <div className="grid gap-1.5">
-            <Label>Assigned cleaners</Label>
+          <fieldset className="grid gap-1.5">
+            <legend className="mb-1.5 text-sm font-medium">Assigned Cleaners</legend>
             {cleaners.length === 0 ? (
               <p className="text-sm text-muted-foreground">No cleaners yet — add them on the Cleaners page.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {cleaners.map((c) => {
                   const on = f.cleaner_ids.includes(c.id);
                   const clash = conflicts.some((x) => x.cleanerId === c.id);
                   return (
-                    <button
-                      type="button"
+                    <Label
                       key={c.id}
-                      onClick={() => set("cleaner_ids", toggle(f.cleaner_ids, c.id))}
-                      className={cn(
-                        "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-                        on ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-accent",
-                        clash && "border-destructive bg-destructive text-destructive-foreground",
-                      )}
+                      htmlFor={`assigned-${c.id}`}
+                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md border p-3 text-sm font-medium"
                     >
-                      {c.name}
-                    </button>
+                      <Checkbox
+                        id={`assigned-${c.id}`}
+                        checked={on}
+                        aria-invalid={clash}
+                        onCheckedChange={() => set("cleaner_ids", toggle(f.cleaner_ids, c.id))}
+                      />
+                      <span className="break-words">{c.name}</span>
+                    </Label>
                   );
                 })}
               </div>
@@ -210,40 +194,11 @@ function AppointmentDialog({
                 {nameOf(c.cleanerId)} is already at {c.appt.location} {hhmm(c.appt.start_time)}–{hhmm(c.appt.end_time)}.
               </p>
             ))}
-          </div>
+          </fieldset>
 
           <div className="grid gap-1.5">
-            <Label>Tasks</Label>
-            <div className="flex flex-wrap gap-2">
-              {TASK_OPTIONS.map((t) => (
-                <button
-                  type="button"
-                  key={t}
-                  onClick={() => set("tasks", toggle(f.tasks, t))}
-                  className={cn(
-                    "rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors",
-                    f.tasks.includes(t) ? "border-sky bg-sky-soft text-primary" : "bg-card text-muted-foreground hover:bg-accent",
-                  )}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-1.5">
-            <Label htmlFor="rm">Remark / instructions</Label>
-            <Textarea id="rm" rows={4} maxLength={2000} placeholder="What should the cleaners do? Special requests…" value={f.remark} onChange={(e) => set("remark", e.target.value)} />
-          </div>
-
-          <div className="grid gap-1.5">
-            <Label>Status</Label>
-            <Select value={f.status} onValueChange={(v) => set("status", v as AppointmentInput["status"])}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="rm">Remark</Label>
+            <Textarea id="rm" rows={4} maxLength={2000} placeholder="Office cleaning and floor cleaning." value={f.remark} onChange={(e) => set("remark", e.target.value)} />
           </div>
 
           {errors.length > 0 && (
@@ -261,7 +216,7 @@ function AppointmentDialog({
           ) : <span />}
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={submit} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save appointment"}</Button>
+            <Button onClick={submit} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save assignment"}</Button>
           </div>
         </DialogFooter>
       </DialogContent>

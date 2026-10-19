@@ -26,6 +26,8 @@ export const Route = createFileRoute("/_authenticated/users")({
       { name: "description", content: "Create and manage staff login accounts." },
       { property: "og:title", content: "Staff Accounts · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Create and manage staff login accounts." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: UsersPage,

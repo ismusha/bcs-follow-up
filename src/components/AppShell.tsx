@@ -33,7 +33,7 @@ function NewButton({ className }: { className?: string }) {
   const { open } = useAppointmentEditor();
   return (
     <Button onClick={() => open()} className={className}>
-      <Plus className="mr-1 h-4 w-4" /> New Appointment
+      <Plus className="mr-1 h-4 w-4" /> New Assignment
     </Button>
   );
 }

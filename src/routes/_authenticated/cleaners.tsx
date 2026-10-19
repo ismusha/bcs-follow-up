@@ -23,6 +23,8 @@ export const Route = createFileRoute("/_authenticated/cleaners")({
       { name: "description", content: "Manage cleaners, contact details and upcoming assignments." },
       { property: "og:title", content: "Cleaners · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Manage cleaners and their assignments." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CleanersPage,

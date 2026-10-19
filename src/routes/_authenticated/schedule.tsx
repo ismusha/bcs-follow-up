@@ -18,6 +18,8 @@ export const Route = createFileRoute("/_authenticated/schedule")({
       { name: "description", content: "Search, filter and manage every cleaning appointment." },
       { property: "og:title", content: "Cleaning Schedule · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Search, filter and manage every cleaning appointment." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Schedule,
@@ -96,7 +98,7 @@ function Schedule() {
         <div className="rounded-xl border border-dashed bg-card p-12 text-center">
           <p className="font-display text-lg font-semibold">{filtered ? "No matching appointments" : "No scheduled jobs yet"}</p>
           <p className="mt-1 text-sm text-muted-foreground">{filtered ? "Try changing the filters." : "Create your first cleaning appointment."}</p>
-          <Button className="mt-4" onClick={() => open()}><Plus className="mr-1 h-4 w-4" />New Appointment</Button>
+          <Button className="mt-4" onClick={() => open()}><Plus className="mr-1 h-4 w-4" />New Assignment</Button>
         </div>
       ) : (
         <>

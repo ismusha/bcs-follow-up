@@ -15,6 +15,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Secure staff sign-in for the Bethelehem Cleaning Service management system." },
       { property: "og:title", content: "Staff Login · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Secure staff sign-in for the cleaning management system." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),
