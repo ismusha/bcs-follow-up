@@ -1,11 +1,12 @@
 import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, Sparkles, UserPlus, Users, X } from "lucide-react";
+import { CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, UserPlus, Users, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AppointmentEditorProvider, useAppointmentEditor } from "@/components/AppointmentEditor";
+import logoMark from "@/assets/logo-mark.png.asset.json";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -18,8 +19,8 @@ const NAV = [
 export function Brand({ light }: { light?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="grid h-9 w-9 place-items-center rounded-xl bg-sky text-navy">
-        <Sparkles className="h-5 w-5" />
+      <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-sidebar-border">
+        <img src={logoMark.url} alt="Bethelehem Cleaning Service logo" className="h-7 w-7 object-contain" />
       </div>
       <div className="leading-tight">
         <p className={cn("font-display text-sm font-bold tracking-wide", light ? "text-navy-foreground" : "text-foreground")}>BETHELEHEM</p>
