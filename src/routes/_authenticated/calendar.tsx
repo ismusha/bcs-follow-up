@@ -20,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/calendar")({
       { name: "description", content: "Daily, weekly and monthly view of who is cleaning where and when." },
       { property: "og:title", content: "Calendar · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Daily, weekly and monthly cleaning calendar." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CalendarPage,
@@ -73,7 +75,7 @@ function CalendarPage() {
           ) : (
             <div className="rounded-xl border border-dashed bg-card p-12 text-center">
               <p className="text-sm text-muted-foreground">No jobs on this day.</p>
-              <Button className="mt-3" variant="outline" onClick={() => open({ date: key(cursor) })}>Add appointment</Button>
+              <Button className="mt-3" variant="outline" onClick={() => open({ date: key(cursor) })}>Add assignment</Button>
             </div>
           )}
         </div>

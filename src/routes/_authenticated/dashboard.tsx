@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { name: "description", content: "Overview of today's cleaning jobs, upcoming work and cleaner availability." },
       { property: "og:title", content: "Dashboard · Bethelehem Cleaning Service" },
       { property: "og:description", content: "Overview of today's cleaning jobs and cleaner availability." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -53,7 +55,7 @@ function Dashboard() {
           {todays.length ? `${todays.length} job${todays.length > 1 ? "s" : ""} scheduled today.` : "No jobs scheduled today."}
         </p>
         <Button onClick={() => open()} variant="secondary" className="mt-5">
-          <Plus className="mr-1 h-4 w-4" /> New Appointment
+          <Plus className="mr-1 h-4 w-4" /> New Assignment
         </Button>
       </div>
 
@@ -89,7 +91,7 @@ function List({ items, cleaners, empty, showDate }: { items: ReturnType<typeof u
     return (
       <div className="rounded-xl border border-dashed bg-card p-8 text-center">
         <p className="text-sm text-muted-foreground">{empty}</p>
-        <Button variant="outline" size="sm" className="mt-3" onClick={() => open()}><Plus className="mr-1 h-4 w-4" />Add appointment</Button>
+        <Button variant="outline" size="sm" className="mt-3" onClick={() => open()}><Plus className="mr-1 h-4 w-4" />Add assignment</Button>
       </div>
     );
   return <div className="grid gap-3">{items.map((a) => <AppointmentCard key={a.id} a={a} cleaners={cleaners} showDate={showDate} />)}</div>;
