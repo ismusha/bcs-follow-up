@@ -21,6 +21,8 @@ export type Location = { id: string; name: string; address: string | null };
 export type Appointment = {
   id: string;
   date: string;
+  /** Last day of the job; equals `date` for single-day jobs. */
+  end_date: string;
   start_time: string;
   end_time: string;
   location: string;
@@ -32,6 +34,10 @@ export type Appointment = {
 export type AppointmentInput = Omit<Appointment, "id"> & { id?: string };
 
 export const hhmm = (t: string) => t.slice(0, 5);
+/** Last day of an appointment (end_date falls back to date). */
+export const lastDay = (a: { date: string; end_date?: string }) => a.end_date || a.date;
+/** True when the appointment spans the given day (yyyy-MM-dd). */
+export const spansDay = (a: { date: string; end_date?: string }, day: string) => a.date <= day && lastDay(a) >= day;
 
 export function useCleaners() {
   return useQuery({
@@ -68,6 +74,7 @@ export function useAppointments() {
       return data.map((a) => ({
         id: a.id,
         date: a.date,
+        end_date: a.end_date,
         start_time: a.start_time,
         end_time: a.end_time,
         location: a.location,
@@ -83,13 +90,15 @@ export function useAppointments() {
 /** Returns the conflicting appointment for a cleaner, if any. */
 export function findConflicts(all: Appointment[], draft: AppointmentInput) {
   if (draft.status === "cancelled") return [];
+  const draftEnd = draft.end_date || draft.date;
   const out: { cleanerId: string; appt: Appointment }[] = [];
   for (const cid of draft.cleaner_ids) {
     const clash = all.find(
       (o) =>
         o.id !== draft.id &&
         o.status !== "cancelled" &&
-        o.date === draft.date &&
+        o.date <= draftEnd &&
+        lastDay(o) >= draft.date &&
         o.cleaner_ids.includes(cid) &&
         hhmm(o.start_time) < hhmm(draft.end_time) &&
         hhmm(o.end_time) > hhmm(draft.start_time),
@@ -105,6 +114,7 @@ export function useSaveAppointment() {
     mutationFn: async (input: AppointmentInput) => {
       const row = {
         date: input.date,
+        end_date: input.end_date || input.date,
         start_time: input.start_time,
         end_time: input.end_time,
         location: input.location.trim(),
