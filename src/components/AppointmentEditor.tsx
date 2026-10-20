@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
+import { StatusBadge } from "@/components/StatusBadge";
 import { validateAssignment } from "@/lib/assignment";
 import {
   findConflicts, hhmm, useAppointments, useCleaners, useDeleteAppointment,
@@ -30,6 +31,7 @@ export const useAppointmentEditor = () => {
 
 const blank = (): AppointmentInput => ({
   date: format(new Date(), "yyyy-MM-dd"),
+  end_date: "",
   start_time: "09:00",
   end_time: "12:00",
   location: "",
@@ -39,7 +41,7 @@ const blank = (): AppointmentInput => ({
   cleaner_ids: [],
 });
 
-export function AppointmentEditorProvider({ children }: { children: ReactNode }) {
+export function AppointmentEditorProvider({ children, readOnly }: { children: ReactNode; readOnly?: boolean }) {
   const [draft, setDraft] = useState<AppointmentInput | null>(null);
   const [toDelete, setToDelete] = useState<Appointment | null>(null);
   const del = useDeleteAppointment();
@@ -48,6 +50,7 @@ export function AppointmentEditorProvider({ children }: { children: ReactNode })
     setDraft({
       ...blank(),
       ...a,
+      end_date: a?.end_date && a.end_date !== a.date ? a.end_date : "",
       start_time: a?.start_time ? hhmm(a.start_time) : "09:00",
       end_time: a?.end_time ? hhmm(a.end_time) : "12:00",
     });
@@ -55,7 +58,8 @@ export function AppointmentEditorProvider({ children }: { children: ReactNode })
   return (
     <EditorCtx.Provider value={{ open, askDelete: setToDelete }}>
       {children}
-      {draft && (
+      {draft && readOnly && <AppointmentViewDialog draft={draft} onClose={() => setDraft(null)} />}
+      {draft && !readOnly && (
         <AppointmentDialog
           draft={draft}
           onClose={() => setDraft(null)}
@@ -96,6 +100,52 @@ export function AppointmentEditorProvider({ children }: { children: ReactNode })
   );
 }
 
+const dateRangeLabel = (f: { date: string; end_date: string }) =>
+  f.end_date && f.end_date !== f.date
+    ? `${format(parseISO(f.date), "MMM d, yyyy")} → ${format(parseISO(f.end_date), "MMM d, yyyy")}`
+    : format(parseISO(f.date), "MMM d, yyyy");
+
+/** Read-only detail view used in the public viewer area. */
+function AppointmentViewDialog({ draft, onClose }: { draft: AppointmentInput; onClose: () => void }) {
+  const { data: cleaners = [] } = useCleaners();
+  const names = draft.cleaner_ids
+    .map((id) => cleaners.find((c) => c.id === id)?.name)
+    .filter(Boolean)
+    .join(", ");
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">{draft.location} <StatusBadge status={draft.status} /></DialogTitle>
+        </DialogHeader>
+        <dl className="grid gap-3 text-sm">
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Date</dt>
+            <dd className="mt-0.5 font-medium">{dateRangeLabel(draft)}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Time</dt>
+            <dd className="mt-0.5 font-medium">{hhmm(draft.start_time)} – {hhmm(draft.end_time)}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assigned cleaners</dt>
+            <dd className="mt-0.5 font-medium">{names || "Unassigned"}</dd>
+          </div>
+          {draft.remark && (
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Remark</dt>
+              <dd className="mt-0.5 whitespace-pre-wrap">{draft.remark}</dd>
+            </div>
+          )}
+        </dl>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function AppointmentDialog({
   draft, onClose, onDelete,
 }: { draft: AppointmentInput; onClose: () => void; onDelete: (a: Appointment) => void }) {
@@ -133,13 +183,14 @@ function AppointmentDialog({
         </DialogHeader>
 
         <div className="grid gap-4">
-          <div className="grid gap-1.5">
-              <Label htmlFor="assignment-date">Date</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid min-w-0 gap-1.5">
+              <Label htmlFor="assignment-date">Start date</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button id="assignment-date" variant="outline" className="justify-start font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {f.date ? format(parseISO(f.date), "MMM d, yyyy") : "Pick date"}
+                  <Button id="assignment-date" variant="outline" className="justify-start px-3 font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                    <span className="truncate">{f.date ? format(parseISO(f.date), "MMM d, yyyy") : "Pick date"}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -151,6 +202,32 @@ function AppointmentDialog({
                   />
                 </PopoverContent>
               </Popover>
+            </div>
+            <div className="grid min-w-0 gap-1.5">
+              <Label htmlFor="assignment-end-date">Finish date <span className="font-normal text-muted-foreground">(optional)</span></Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button id="assignment-end-date" variant="outline" className="justify-start px-3 font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                    <span className="truncate">{f.end_date ? format(parseISO(f.end_date), "MMM d, yyyy") : "Same day"}</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={f.end_date ? parseISO(f.end_date) : undefined}
+                    onSelect={(d) => d && set("end_date", format(d, "yyyy-MM-dd"))}
+                    disabled={(d) => (f.date ? d < parseISO(f.date) : false)}
+                    className="pointer-events-auto p-3"
+                  />
+                  {f.end_date && (
+                    <div className="border-t p-2">
+                      <Button variant="ghost" size="sm" className="w-full" onClick={() => set("end_date", "")}>Clear — single day</Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
