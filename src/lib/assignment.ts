@@ -1,5 +1,7 @@
 export type AssignmentFields = {
   date: string;
+  /** Finish date for multi-day jobs; "" means the job lasts only one day. */
+  end_date: string;
   start_time: string;
   end_time: string;
   location: string;
@@ -9,7 +11,9 @@ export type AssignmentFields = {
 
 export function validateAssignment(fields: AssignmentFields): string[] {
   const errors: string[] = [];
-  if (!fields.date) errors.push("Choose a date.");
+  if (!fields.date) errors.push("Choose a start date.");
+  if (fields.end_date && fields.date && fields.end_date < fields.date)
+    errors.push("Finish date must be on or after the start date.");
   if (!fields.start_time || !fields.end_time) errors.push("Set start and finish time.");
   else if (fields.end_time <= fields.start_time) errors.push("Finish time must be after start time.");
   if (!fields.location.trim()) errors.push("Enter a location.");
