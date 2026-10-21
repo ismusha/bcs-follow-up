@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateAssignment } from "@/lib/assignment";
+import { displayStatus, isJobPast, validateAssignment } from "@/lib/assignment";
 
 const base = {
   date: "2026-10-16",
