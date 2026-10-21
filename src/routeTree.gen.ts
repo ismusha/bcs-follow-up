@@ -12,11 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ViewRouteImport } from './routes/view'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedCleanersRouteImport } from './routes/_authenticated/cleaners'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
+import { Route as ViewIndexRouteImport } from './routes/view/index'
+import { Route as ViewCalendarRouteImport } from './routes/view/calendar'
+import { Route as ViewCleanersRouteImport } from './routes/view/cleaners'
+import { Route as ViewDashboardRouteImport } from './routes/view/dashboard'
+import { Route as ViewScheduleRouteImport } from './routes/view/schedule'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +36,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ViewRoute = ViewRouteImport.update({
+  id: '/view',
+  path: '/view',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
@@ -57,15 +68,46 @@ const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ViewIndexRoute = ViewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ViewRoute,
+} as any)
+const ViewCalendarRoute = ViewCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => ViewRoute,
+} as any)
+const ViewCleanersRoute = ViewCleanersRouteImport.update({
+  id: '/cleaners',
+  path: '/cleaners',
+  getParentRoute: () => ViewRoute,
+} as any)
+const ViewDashboardRoute = ViewDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ViewRoute,
+} as any)
+const ViewScheduleRoute = ViewScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => ViewRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/view': typeof ViewRouteWithChildren
   '/calendar': typeof AuthenticatedCalendarRoute
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/view/calendar': typeof ViewCalendarRoute
+  '/view/cleaners': typeof ViewCleanersRoute
+  '/view/dashboard': typeof ViewDashboardRoute
+  '/view/schedule': typeof ViewScheduleRoute
+  '/view/': typeof ViewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -75,28 +117,45 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/view/calendar': typeof ViewCalendarRoute
+  '/view/cleaners': typeof ViewCleanersRoute
+  '/view/dashboard': typeof ViewDashboardRoute
+  '/view/schedule': typeof ViewScheduleRoute
+  '/view': typeof ViewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/view': typeof ViewRouteWithChildren
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/cleaners': typeof AuthenticatedCleanersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/view/calendar': typeof ViewCalendarRoute
+  '/view/cleaners': typeof ViewCleanersRoute
+  '/view/dashboard': typeof ViewDashboardRoute
+  '/view/schedule': typeof ViewScheduleRoute
+  '/view/': typeof ViewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/view'
     | '/calendar'
     | '/cleaners'
     | '/dashboard'
     | '/schedule'
     | '/users'
+    | '/view/calendar'
+    | '/view/cleaners'
+    | '/view/dashboard'
+    | '/view/schedule'
+    | '/view/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -106,22 +165,34 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/schedule'
     | '/users'
+    | '/view/calendar'
+    | '/view/cleaners'
+    | '/view/dashboard'
+    | '/view/schedule'
+    | '/view'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/view'
     | '/_authenticated/calendar'
     | '/_authenticated/cleaners'
     | '/_authenticated/dashboard'
     | '/_authenticated/schedule'
     | '/_authenticated/users'
+    | '/view/calendar'
+    | '/view/cleaners'
+    | '/view/dashboard'
+    | '/view/schedule'
+    | '/view/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ViewRoute: typeof ViewRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -145,6 +216,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/view': {
+      id: '/view'
+      path: '/view'
+      fullPath: '/view'
+      preLoaderRoute: typeof ViewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/calendar': {
@@ -182,6 +260,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/view/': {
+      id: '/view/'
+      path: '/'
+      fullPath: '/view/'
+      preLoaderRoute: typeof ViewIndexRouteImport
+      parentRoute: typeof ViewRoute
+    }
+    '/view/calendar': {
+      id: '/view/calendar'
+      path: '/calendar'
+      fullPath: '/view/calendar'
+      preLoaderRoute: typeof ViewCalendarRouteImport
+      parentRoute: typeof ViewRoute
+    }
+    '/view/cleaners': {
+      id: '/view/cleaners'
+      path: '/cleaners'
+      fullPath: '/view/cleaners'
+      preLoaderRoute: typeof ViewCleanersRouteImport
+      parentRoute: typeof ViewRoute
+    }
+    '/view/dashboard': {
+      id: '/view/dashboard'
+      path: '/dashboard'
+      fullPath: '/view/dashboard'
+      preLoaderRoute: typeof ViewDashboardRouteImport
+      parentRoute: typeof ViewRoute
+    }
+    '/view/schedule': {
+      id: '/view/schedule'
+      path: '/schedule'
+      fullPath: '/view/schedule'
+      preLoaderRoute: typeof ViewScheduleRouteImport
+      parentRoute: typeof ViewRoute
+    }
   }
 }
 
@@ -204,10 +317,29 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ViewRouteChildren {
+  ViewCalendarRoute: typeof ViewCalendarRoute
+  ViewCleanersRoute: typeof ViewCleanersRoute
+  ViewDashboardRoute: typeof ViewDashboardRoute
+  ViewScheduleRoute: typeof ViewScheduleRoute
+  ViewIndexRoute: typeof ViewIndexRoute
+}
+
+const ViewRouteChildren: ViewRouteChildren = {
+  ViewCalendarRoute: ViewCalendarRoute,
+  ViewCleanersRoute: ViewCleanersRoute,
+  ViewDashboardRoute: ViewDashboardRoute,
+  ViewScheduleRoute: ViewScheduleRoute,
+  ViewIndexRoute: ViewIndexRoute,
+}
+
+const ViewRouteWithChildren = ViewRoute._addFileChildren(ViewRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ViewRoute: ViewRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

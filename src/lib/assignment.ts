@@ -1,3 +1,27 @@
+export type AssignmentStatus = "scheduled" | "in_progress" | "completed" | "cancelled";
+
+/** True once the job's finish date and time have passed (local time). */
+export function isJobPast(
+  a: { date: string; end_date?: string; end_time: string },
+  now = new Date(),
+): boolean {
+  const end = new Date(`${a.end_date || a.date}T${a.end_time.slice(0, 5)}:00`);
+  return end.getTime() <= now.getTime();
+}
+
+/**
+ * Status as it should be shown: a job whose finish date/time has passed
+ * automatically reads as Completed. Cancelled and Completed never change.
+ */
+export function displayStatus(
+  a: { date: string; end_date?: string; end_time: string; status: AssignmentStatus },
+  now = new Date(),
+): AssignmentStatus {
+  if (a.status === "cancelled" || a.status === "completed") return a.status;
+  if (isJobPast(a, now)) return "completed";
+  return a.status;
+}
+
 export type AssignmentFields = {
   date: string;
   /** Finish date for multi-day jobs; "" means the job lasts only one day. */

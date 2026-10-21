@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { displayStatus } from "@/lib/assignment";
 
 export type Status = "scheduled" | "in_progress" | "completed" | "cancelled";
 export const STATUSES: { value: Status; label: string }[] = [
@@ -80,7 +81,8 @@ export function useAppointments() {
         location: a.location,
         remark: a.remark,
         tasks: a.tasks,
-        status: a.status,
+        // Past jobs automatically read as Completed.
+        status: displayStatus(a),
         cleaner_ids: (a.appointment_cleaners ?? []).map((c) => c.cleaner_id),
       })) as Appointment[];
     },
