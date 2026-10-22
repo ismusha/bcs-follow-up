@@ -66,7 +66,7 @@ export function DashboardPage() {
         </section>
         <section>
           <PageHeader title="Upcoming">
-            <Link to="/schedule" className="text-sm font-semibold text-primary hover:underline">View all</Link>
+            <Link to={readOnly ? "/view/schedule" : "/schedule"} className="text-sm font-semibold text-primary hover:underline">View all</Link>
           </PageHeader>
           <List items={upcoming.slice(0, 5)} cleaners={cleaners} empty="No upcoming jobs." showDate />
         </section>
