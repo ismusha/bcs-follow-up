@@ -14,7 +14,7 @@ export function isJobPast(
  * automatically reads as Completed. Cancelled and Completed never change.
  */
 export function displayStatus(
-  a: { date: string; end_date?: string; end_time: string; status: AssignmentStatus },
+  a: { date: string; end_date?: string; start_time?: string; end_time: string; status: AssignmentStatus },
   now = new Date(),
 ): AssignmentStatus {
   if (a.status === "cancelled" || a.status === "completed") return a.status;

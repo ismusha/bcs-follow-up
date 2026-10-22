@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Lock, ShieldCheck } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Eye, Lock, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { createFirstOwner, hasAnyAccounts } from "@/lib/users.functions";
 import { Button } from "@/components/ui/button";
@@ -93,6 +93,13 @@ function AuthPage() {
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" size="lg" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
+            </div>
+            <div className="mt-8 border-t pt-6">
+              <p className="text-sm font-semibold">Viewer</p>
+              <p className="mt-1 text-xs text-muted-foreground">See the schedule without signing in. Nothing can be changed.</p>
+              <Button asChild variant="outline" size="lg" className="mt-3 w-full">
+                <Link to="/view/dashboard"><Eye className="mr-1 h-4 w-4" /> Continue as viewer</Link>
+              </Button>
             </div>
           </form>
         ) : (
