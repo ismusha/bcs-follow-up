@@ -16,12 +16,14 @@ import { Route as ViewRouteImport } from './routes/view'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedCleanersRouteImport } from './routes/_authenticated/cleaners'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProjectRouteImport } from './routes/_authenticated/project'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as ViewIndexRouteImport } from './routes/view/index'
 import { Route as ViewCalendarRouteImport } from './routes/view/calendar'
 import { Route as ViewCleanersRouteImport } from './routes/view/cleaners'
 import { Route as ViewDashboardRouteImport } from './routes/view/dashboard'
+import { Route as ViewProjectRouteImport } from './routes/view/project'
 import { Route as ViewScheduleRouteImport } from './routes/view/schedule'
 
 const IndexRoute = IndexRouteImport.update({
@@ -58,6 +60,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProjectRoute = AuthenticatedProjectRouteImport.update({
+  id: '/project',
+  path: '/project',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -88,6 +95,11 @@ const ViewDashboardRoute = ViewDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ViewRoute,
 } as any)
+const ViewProjectRoute = ViewProjectRouteImport.update({
+  id: '/project',
+  path: '/project',
+  getParentRoute: () => ViewRoute,
+} as any)
 const ViewScheduleRoute = ViewScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -101,11 +113,13 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/project': typeof AuthenticatedProjectRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/users': typeof AuthenticatedUsersRoute
   '/view/calendar': typeof ViewCalendarRoute
   '/view/cleaners': typeof ViewCleanersRoute
   '/view/dashboard': typeof ViewDashboardRoute
+  '/view/project': typeof ViewProjectRoute
   '/view/schedule': typeof ViewScheduleRoute
   '/view/': typeof ViewIndexRoute
 }
@@ -115,11 +129,13 @@ export interface FileRoutesByTo {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/project': typeof AuthenticatedProjectRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/users': typeof AuthenticatedUsersRoute
   '/view/calendar': typeof ViewCalendarRoute
   '/view/cleaners': typeof ViewCleanersRoute
   '/view/dashboard': typeof ViewDashboardRoute
+  '/view/project': typeof ViewProjectRoute
   '/view/schedule': typeof ViewScheduleRoute
   '/view': typeof ViewIndexRoute
 }
@@ -132,11 +148,13 @@ export interface FileRoutesById {
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/cleaners': typeof AuthenticatedCleanersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/project': typeof AuthenticatedProjectRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/view/calendar': typeof ViewCalendarRoute
   '/view/cleaners': typeof ViewCleanersRoute
   '/view/dashboard': typeof ViewDashboardRoute
+  '/view/project': typeof ViewProjectRoute
   '/view/schedule': typeof ViewScheduleRoute
   '/view/': typeof ViewIndexRoute
 }
@@ -149,11 +167,13 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/cleaners'
     | '/dashboard'
+    | '/project'
     | '/schedule'
     | '/users'
     | '/view/calendar'
     | '/view/cleaners'
     | '/view/dashboard'
+    | '/view/project'
     | '/view/schedule'
     | '/view/'
   fileRoutesByTo: FileRoutesByTo
@@ -163,11 +183,13 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/cleaners'
     | '/dashboard'
+    | '/project'
     | '/schedule'
     | '/users'
     | '/view/calendar'
     | '/view/cleaners'
     | '/view/dashboard'
+    | '/view/project'
     | '/view/schedule'
     | '/view'
   id:
@@ -179,11 +201,13 @@ export interface FileRouteTypes {
     | '/_authenticated/calendar'
     | '/_authenticated/cleaners'
     | '/_authenticated/dashboard'
+    | '/_authenticated/project'
     | '/_authenticated/schedule'
     | '/_authenticated/users'
     | '/view/calendar'
     | '/view/cleaners'
     | '/view/dashboard'
+    | '/view/project'
     | '/view/schedule'
     | '/view/'
   fileRoutesById: FileRoutesById
@@ -246,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/project': {
+      id: '/_authenticated/project'
+      path: '/project'
+      fullPath: '/project'
+      preLoaderRoute: typeof AuthenticatedProjectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/schedule': {
       id: '/_authenticated/schedule'
       path: '/schedule'
@@ -288,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewDashboardRouteImport
       parentRoute: typeof ViewRoute
     }
+    '/view/project': {
+      id: '/view/project'
+      path: '/project'
+      fullPath: '/view/project'
+      preLoaderRoute: typeof ViewProjectRouteImport
+      parentRoute: typeof ViewRoute
+    }
     '/view/schedule': {
       id: '/view/schedule'
       path: '/schedule'
@@ -302,6 +340,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedCleanersRoute: typeof AuthenticatedCleanersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProjectRoute: typeof AuthenticatedProjectRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
 }
@@ -310,6 +349,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedCleanersRoute: AuthenticatedCleanersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProjectRoute: AuthenticatedProjectRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
 }
@@ -321,6 +361,7 @@ interface ViewRouteChildren {
   ViewCalendarRoute: typeof ViewCalendarRoute
   ViewCleanersRoute: typeof ViewCleanersRoute
   ViewDashboardRoute: typeof ViewDashboardRoute
+  ViewProjectRoute: typeof ViewProjectRoute
   ViewScheduleRoute: typeof ViewScheduleRoute
   ViewIndexRoute: typeof ViewIndexRoute
 }
@@ -329,6 +370,7 @@ const ViewRouteChildren: ViewRouteChildren = {
   ViewCalendarRoute: ViewCalendarRoute,
   ViewCleanersRoute: ViewCleanersRoute,
   ViewDashboardRoute: ViewDashboardRoute,
+  ViewProjectRoute: ViewProjectRoute,
   ViewScheduleRoute: ViewScheduleRoute,
   ViewIndexRoute: ViewIndexRoute,
 }
