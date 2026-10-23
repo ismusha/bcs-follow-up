@@ -1,0 +1,2 @@
+- [ ] Add Project inspection records and staff/viewer menu entries.
+- [ ] Test inspector restrictions and saved-record/viewer flow.
