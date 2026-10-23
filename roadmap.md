@@ -1,2 +1,3 @@
-- [ ] Add Project inspection records and staff/viewer menu entries.
-- [ ] Test inspector restrictions and saved-record/viewer flow.
+- [x] Add Project inspection records and staff/viewer menu entries.
+- [x] Test inspector restrictions and verify viewer page/mobile menu without editing controls.
+- [ ] Verify saving and reopening as staff — requires the user to sign in; no matching testing account is available.
