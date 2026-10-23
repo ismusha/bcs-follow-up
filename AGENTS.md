@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep assignment-form validation in a browser-safe helper shared with tests, so internal assignment inputs are validated independently of the persistence layer.
+- Project inspection pages share one staff/viewer component and a browser-safe validation schema; database constraints enforce inspector choices and RLS protects writes independently of hidden controls.
