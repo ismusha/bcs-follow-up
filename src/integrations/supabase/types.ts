@@ -137,6 +137,33 @@ export type Database = {
         }
         Relationships: []
       }
+      project_inspections: {
+        Row: {
+          created_at: string
+          id: string
+          inspected_by: string
+          inspection_date: string
+          project_name: string
+          remark: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inspected_by: string
+          inspection_date: string
+          project_name: string
+          remark?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inspected_by?: string
+          inspection_date?: string
+          project_name?: string
+          remark?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

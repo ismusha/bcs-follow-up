@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, UserPlus, Users, X } from "lucide-react";
+import { CalendarDays, ClipboardCheck, ClipboardList, LayoutDashboard, LogOut, Menu, Plus, UserPlus, Users, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import logoMark from "@/assets/logo-mark.png.asset.json";
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/schedule", label: "Cleaning Schedule", icon: ClipboardList },
+  { to: "/project", label: "Project", icon: ClipboardCheck },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/cleaners", label: "Cleaners", icon: Users },
   { to: "/users", label: "Staff Accounts", icon: UserPlus },

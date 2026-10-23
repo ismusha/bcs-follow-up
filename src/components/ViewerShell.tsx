@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, ClipboardList, Eye, LayoutDashboard, LogIn, Menu, Users, X } from "lucide-react";
+import { CalendarDays, ClipboardCheck, ClipboardList, Eye, LayoutDashboard, LogIn, Menu, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/AppShell";
 import { AppointmentEditorProvider } from "@/components/AppointmentEditor";
@@ -9,6 +9,7 @@ import { ReadOnlyProvider } from "@/lib/readonly";
 const NAV = [
   { to: "/view/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/view/schedule", label: "Cleaning Schedule", icon: ClipboardList },
+  { to: "/view/project", label: "Project", icon: ClipboardCheck },
   { to: "/view/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/view/cleaners", label: "Cleaners", icon: Users },
 ] as const;
