@@ -137,6 +137,29 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_checks: {
+        Row: {
+          appointment_id: string
+          is_paid: boolean
+        }
+        Insert: {
+          appointment_id: string
+          is_paid?: boolean
+        }
+        Update: {
+          appointment_id?: string
+          is_paid?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_checks_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: true
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_inspections: {
         Row: {
           created_at: string

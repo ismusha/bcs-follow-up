@@ -1,3 +1,5 @@
 - [x] Add Project inspection records and staff/viewer menu entries.
 - [x] Test inspector restrictions and verify viewer page/mobile menu without editing controls.
 - [ ] Verify saving and reopening as staff — requires the user to sign in; no matching testing account is available.
+- [ ] Add assignment Payment Checklist with staff updates and read-only viewer access.
+- [ ] Verify payment persistence and viewer protections.
