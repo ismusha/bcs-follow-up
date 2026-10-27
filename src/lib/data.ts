@@ -4,7 +4,7 @@ import { displayStatus } from "@/lib/assignment";
 
 export type Status = "scheduled" | "in_progress" | "completed" | "cancelled";
 export const STATUSES: { value: Status; label: string }[] = [
-  { value: "scheduled", label: "Scheduled" },
+  { value: "scheduled", label: "Pending" },
   { value: "in_progress", label: "In Progress" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
