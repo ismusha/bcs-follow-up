@@ -44,42 +44,42 @@ describe("Internal cleaning assignment", () => {
   it("rejects finish times at or before the start time", () => {
     for (const end_time of ["08:00", "07:00"]) {
       expect(validateAssignment({ ...base, end_time }))
-        .toContain("Finish time must be after start time.");
-    }
+        .toContain("Finish time must be after the start time.");
+  }
   });
 });
 
-describe("Automatic completion when the settled time has passed", () => {
+describe("Assignment status remains staff-controlled", () => {
   const now = new Date("2026-10-21T12:00:00");
 
-  it("shows a scheduled job as completed once its finish date and time have passed", () => {
+  it("keeps a scheduled job pending even after its finish date and time pass", () => {
     expect(displayStatus({ date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "11:00", status: "scheduled" }, now))
-      .toBe("completed");
-  });
-
-  it("shows a multi-day job as completed only after the finish day's end time", () => {
-    const job = { date: "2026-10-20", end_date: "2026-10-21", start_time: "08:00", end_time: "13:00", status: "scheduled" as const };
-    expect(displayStatus(job, now)).toBe("scheduled");
-    expect(displayStatus(job, new Date("2026-10-21T13:00:00"))).toBe("completed");
-  });
-
-  it("keeps a future job scheduled", () => {
-    expect(displayStatus({ date: "2026-10-22", end_date: "", start_time: "08:00", end_time: "11:00", status: "scheduled" }, now))
       .toBe("scheduled");
   });
 
-  it("never auto-completes a cancelled job", () => {
+  it("keeps a multi-day job scheduled after its final day passes", () => {
+    const job = { date: "2026-10-20", end_date: "2026-10-21", start_time: "08:00", end_time: "13:00", status: "scheduled" as const };
+    expect(displayStatus(job, now)).toBe("scheduled");
+    expect(displayStatus(job, new Date("2026-10-22T13:00:00"))).toBe("scheduled");
+  });
+
+  it("preserves an in-progress job even after its finish time passes", () => {
+    const job = { date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "14:00", status: "in_progress" as const };
+    expect(displayStatus(job, now)).toBe("in_progress");
+    expect(displayStatus(job, new Date("2026-10-21T14:30:00"))).toBe("in_progress");
+  });
+
+  it("preserves a completed status when staff explicitly marks the job completed", () => {
+    expect(displayStatus({ date: "2026-10-20", end_date: "", start_time: "08:00", end_time: "11:00", status: "completed" }, now))
+      .toBe("completed");
+  });
+
+  it("never changes a cancelled job", () => {
     expect(displayStatus({ date: "2026-10-20", end_date: "", start_time: "08:00", end_time: "11:00", status: "cancelled" }, now))
       .toBe("cancelled");
   });
 
-  it("keeps an in-progress job running until its finish time passes", () => {
-    const job = { date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "14:00", status: "in_progress" as const };
-    expect(displayStatus(job, now)).toBe("in_progress");
-    expect(displayStatus(job, new Date("2026-10-21T14:30:00"))).toBe("completed");
-  });
-
-  it("treats a job ending exactly now as past", () => {
+  it("still detects whether the scheduled finish time has passed for date calculations", () => {
     expect(isJobPast({ date: "2026-10-21", end_date: "", end_time: "12:00" }, now)).toBe(true);
   });
 });
