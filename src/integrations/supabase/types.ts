@@ -160,6 +160,27 @@ export type Database = {
           },
         ]
       }
+      monthly_company_payments: {
+        Row: {
+          company_name: string
+          is_paid: boolean
+          month: number
+          year: number
+        }
+        Insert: {
+          company_name: string
+          is_paid?: boolean
+          month: number
+          year: number
+        }
+        Update: {
+          company_name?: string
+          is_paid?: boolean
+          month?: number
+          year?: number
+        }
+        Relationships: []
+      }
       project_inspections: {
         Row: {
           created_at: string
