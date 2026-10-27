@@ -17,6 +17,7 @@ import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCleanersRouteImport } from './routes/_authenticated/cleaners'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProjectRouteImport } from './routes/_authenticated/project'
+import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as ViewIndexRouteImport } from './routes/view/index'
@@ -24,6 +25,7 @@ import { Route as ViewCalendarRouteImport } from './routes/view/calendar'
 import { Route as ViewCleanersRouteImport } from './routes/view/cleaners'
 import { Route as ViewDashboardRouteImport } from './routes/view/dashboard'
 import { Route as ViewProjectRouteImport } from './routes/view/project'
+import { Route as ViewPaymentsRouteImport } from './routes/view/payments'
 import { Route as ViewScheduleRouteImport } from './routes/view/schedule'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +67,11 @@ const AuthenticatedProjectRoute = AuthenticatedProjectRouteImport.update({
   path: '/project',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -100,6 +107,11 @@ const ViewProjectRoute = ViewProjectRouteImport.update({
   path: '/project',
   getParentRoute: () => ViewRoute,
 } as any)
+const ViewPaymentsRoute = ViewPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => ViewRoute,
+} as any)
 const ViewScheduleRoute = ViewScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -114,12 +126,14 @@ export interface FileRoutesByFullPath {
   '/cleaners': typeof AuthenticatedCleanersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/project': typeof AuthenticatedProjectRoute
+  '/payments': typeof AuthenticatedPaymentsRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/users': typeof AuthenticatedUsersRoute
   '/view/calendar': typeof ViewCalendarRoute
   '/view/cleaners': typeof ViewCleanersRoute
   '/view/dashboard': typeof ViewDashboardRoute
   '/view/project': typeof ViewProjectRoute
+  '/view/payments': typeof ViewPaymentsRoute
   '/view/schedule': typeof ViewScheduleRoute
   '/view/': typeof ViewIndexRoute
 }
@@ -149,6 +163,7 @@ export interface FileRoutesById {
   '/_authenticated/cleaners': typeof AuthenticatedCleanersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/project': typeof AuthenticatedProjectRoute
+  '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/view/calendar': typeof ViewCalendarRoute
@@ -168,12 +183,14 @@ export interface FileRouteTypes {
     | '/cleaners'
     | '/dashboard'
     | '/project'
+    | '/payments'
     | '/schedule'
     | '/users'
     | '/view/calendar'
     | '/view/cleaners'
     | '/view/dashboard'
     | '/view/project'
+    | '/view/payments'
     | '/view/schedule'
     | '/view/'
   fileRoutesByTo: FileRoutesByTo
@@ -202,6 +219,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cleaners'
     | '/_authenticated/dashboard'
     | '/_authenticated/project'
+    | '/_authenticated/payments'
     | '/_authenticated/schedule'
     | '/_authenticated/users'
     | '/view/calendar'
@@ -277,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/payments': {
+      id: '/_authenticated/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof AuthenticatedPaymentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/schedule': {
       id: '/_authenticated/schedule'
       path: '/schedule'
@@ -326,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewProjectRouteImport
       parentRoute: typeof ViewRoute
     }
+    '/view/payments': {
+      id: '/view/payments'
+      path: '/payments'
+      fullPath: '/view/payments'
+      preLoaderRoute: typeof ViewPaymentsRouteImport
+      parentRoute: typeof ViewRoute
+    }
     '/view/schedule': {
       id: '/view/schedule'
       path: '/schedule'
@@ -341,6 +373,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCleanersRoute: typeof AuthenticatedCleanersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProjectRoute: typeof AuthenticatedProjectRoute
+  AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
 }
@@ -350,6 +383,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCleanersRoute: AuthenticatedCleanersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProjectRoute: AuthenticatedProjectRoute,
+  AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
 }
@@ -362,6 +396,7 @@ interface ViewRouteChildren {
   ViewCleanersRoute: typeof ViewCleanersRoute
   ViewDashboardRoute: typeof ViewDashboardRoute
   ViewProjectRoute: typeof ViewProjectRoute
+  ViewPaymentsRoute: typeof ViewPaymentsRoute
   ViewScheduleRoute: typeof ViewScheduleRoute
   ViewIndexRoute: typeof ViewIndexRoute
 }
@@ -371,6 +406,7 @@ const ViewRouteChildren: ViewRouteChildren = {
   ViewCleanersRoute: ViewCleanersRoute,
   ViewDashboardRoute: ViewDashboardRoute,
   ViewProjectRoute: ViewProjectRoute,
+  ViewPaymentsRoute: ViewPaymentsRoute,
   ViewScheduleRoute: ViewScheduleRoute,
   ViewIndexRoute: ViewIndexRoute,
 }
