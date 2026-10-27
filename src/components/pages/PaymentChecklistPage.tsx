@@ -1,86 +1,105 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format, parseISO } from "date-fns";
-import { CheckCircle2, CircleDollarSign, LoaderCircle, Search, XCircle } from "lucide-react";
+import { CheckCircle2, Circle, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useReadOnly } from "@/lib/readonly";
-import { useAppointments, useCleaners } from "@/lib/data";
 
-type PaymentCheck = { appointment_id: string; is_paid: boolean };
+const COMPANIES = [
+  "ECA",
+  "Zam Zam Bank",
+  "AUCDC",
+  "Last Mile",
+  "Reinsurance",
+  "Compassion",
+  "UNISA",
+  "Qatar Airways",
+  "Water Aid",
+  "Corteva",
+  "UNDP (Kality)",
+  "UNDP (Bambis)",
+  "UNESCO",
+  "Kifiya",
+  "Hijra Bank",
+  "Bank of Abyssinia",
+] as const;
+
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+type MonthlyPayment = { company_name: string; month: number; year: number; is_paid: boolean };
 
 export function PaymentChecklistPage() {
   const readOnly = useReadOnly();
   const qc = useQueryClient();
-  const [search, setSearch] = useState("");
-  const appointments = useAppointments();
-  const cleaners = useCleaners();
+  const [month, setMonth] = useState(String(new Date().getMonth() + 1));
+  const year = new Date().getFullYear();
+
   const payments = useQuery({
-    queryKey: ["payment-checks"],
+    queryKey: ["monthly-company-payments", year, month],
     queryFn: async () => {
-      const { data, error } = await supabase.from("payment_checks").select("*");
+      const { data, error } = await supabase
+        .from("monthly_company_payments")
+        .select("company_name, month, year, is_paid")
+        .eq("year", year)
+        .eq("month", Number(month));
       if (error) throw error;
-      return data as PaymentCheck[];
+      return data as MonthlyPayment[];
     },
   });
 
   const save = useMutation({
-    mutationFn: async ({ appointmentId, isPaid }: { appointmentId: string; isPaid: boolean }) => {
+    mutationFn: async ({ company, isPaid }: { company: string; isPaid: boolean }) => {
       if (readOnly) throw new Error("This view is read-only.");
-      const { error } = await supabase.from("payment_checks").upsert(
-        { appointment_id: appointmentId, is_paid: isPaid },
-        { onConflict: "appointment_id" },
+      const { error } = await supabase.from("monthly_company_payments").upsert(
+        { company_name: company, month: Number(month), year, is_paid: isPaid },
+        { onConflict: "company_name,month,year" },
       );
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["payment-checks"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["monthly-company-payments", year, month] }),
     onError: (error) => toast.error(`Could not update payment status: ${error.message}`),
   });
 
-  const rows = useMemo(() => {
-    const paid = new Map((payments.data ?? []).map((p) => [p.appointment_id, p.is_paid]));
-    const cleanerNames = new Map((cleaners.data ?? []).map((c) => [c.id, c.name]));
-    return (appointments.data ?? []).map((a) => ({
-      ...a,
-      isPaid: paid.get(a.id) ?? false,
-      assigned: a.cleaner_ids.map((id) => cleanerNames.get(id)).filter(Boolean).join(", "),
-    })).filter((a) => `${a.location} ${a.assigned} ${a.remark} ${a.date}`.toLowerCase().includes(search.toLowerCase()));
-  }, [appointments.data, cleaners.data, payments.data, search]);
-
-  const isLoading = appointments.isLoading || cleaners.isLoading || payments.isLoading;
-  const error = appointments.error || cleaners.error || payments.error;
+  const paidMap = new Map((payments.data ?? []).map((p) => [p.company_name, p.is_paid]));
 
   return <>
-    <PageHeader title="Payment Checklist" subtitle="Track which cleaning assignments have been paid.">
-      <div className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
-        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-        {rows.filter((r) => r.isPaid).length} paid / {rows.length} assignments
-      </div>
-    </PageHeader>
-    <div className="relative mb-5 max-w-md">
-      <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-      <Input aria-label="Search assignments" placeholder="Search location, staff, date…" className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+    <PageHeader title="Payment Checklist" subtitle="Monthly payment status for the 16 companies." />
+    <div className="mb-5 max-w-xs">
+      <Select value={month} onValueChange={setMonth}>
+        <SelectTrigger aria-label="Choose month"><SelectValue placeholder="Choose month" /></SelectTrigger>
+        <SelectContent>
+          {MONTHS.map((name, index) => <SelectItem key={name} value={String(index + 1)}>{name}</SelectItem>)}
+        </SelectContent>
+      </Select>
     </div>
-    {isLoading ? <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground"><LoaderCircle className="h-5 w-5 animate-spin" />Loading payment checklist…</div>
-      : error ? <div role="alert" className="rounded-xl border border-destructive/30 p-6 text-sm"><p className="font-semibold">Could not load payment checklist.</p><p className="mt-1 text-muted-foreground">{error.message}</p><Button className="mt-3" variant="outline" onClick={() => { appointments.refetch(); cleaners.refetch(); payments.refetch(); }}>Try again</Button></div>
-      : rows.length === 0 ? <div className="rounded-xl border border-dashed p-12 text-center"><CircleDollarSign className="mx-auto mb-3 h-8 w-8 text-muted-foreground" /><p className="font-semibold">{(appointments.data ?? []).length ? "No matching assignments" : "No assignments yet"}</p><p className="mt-1 text-sm text-muted-foreground">Cleaning assignments will appear here automatically.</p></div>
-      : <div className="grid gap-3">{rows.map((a) => <article key={a.id} className="rounded-xl border bg-card p-4 shadow-card sm:p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2"><h2 className="break-words font-display text-lg font-semibold">{a.location}</h2><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${a.isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>{a.isPaid ? "Paid" : "Unpaid"}</span></div>
-            <p className="mt-1 text-sm text-muted-foreground">{format(parseISO(a.date), "EEE, MMM d, yyyy")} · {a.start_time.slice(0,5)}–{a.end_time.slice(0,5)}</p>
-            <p className="mt-1 text-sm"><span className="text-muted-foreground">Assigned staff: </span>{a.assigned || "Unassigned"}</p>
-            {a.remark && <p className="mt-1 break-words text-sm text-muted-foreground">{a.remark}</p>}
-          </div>
-          {!readOnly && <Button className="shrink-0" variant={a.isPaid ? "outline" : "default"} disabled={save.isPending} onClick={() => save.mutate({ appointmentId: a.id, isPaid: !a.isPaid })}>
-            {save.isPending ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : a.isPaid ? <XCircle className="mr-2 h-4 w-4" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-            Mark {a.isPaid ? "unpaid" : "paid"}
-          </Button>}
-        </div>
-      </article>)}</div>}
-    {readOnly && <p className="mt-5 text-center text-xs text-muted-foreground">View only — payment statuses cannot be changed here.</p>}
+
+    {payments.isLoading
+      ? <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground"><LoaderCircle className="h-5 w-5 animate-spin" />Loading payments…</div>
+      : payments.error
+        ? <div role="alert" className="rounded-xl border border-destructive/30 p-6 text-sm"><p className="font-semibold">Could not load payments.</p><p className="mt-1 text-muted-foreground">{payments.error.message}</p><Button className="mt-3" variant="outline" onClick={() => payments.refetch()}>Try again</Button></div>
+        : <div className="overflow-hidden rounded-xl border bg-card">
+          {COMPANIES.map((company, index) => {
+            const isPaid = paidMap.get(company) ?? false;
+            return <div key={company} className={`flex items-center justify-between gap-3 px-4 py-4 sm:px-5 ${index < COMPANIES.length - 1 ? "border-b" : ""}`}>
+              <span className="font-medium">{company}</span>
+              <Button
+                variant={isPaid ? "outline" : "secondary"}
+                className={`min-w-28 shrink-0 ${isPaid ? "text-emerald-700" : ""}`}
+                disabled={readOnly || save.isPending}
+                onClick={() => save.mutate({ company, isPaid: !isPaid })}
+              >
+                {save.isPending ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : isPaid ? <CheckCircle2 className="mr-2 h-4 w-4" /> : <Circle className="mr-2 h-4 w-4" />}
+                {isPaid ? "Paid" : "Unpaid"}
+              </Button>
+            </div>;
+          })}
+        </div>}
+    {readOnly && <p className="mt-4 text-center text-xs text-muted-foreground">View only — payment statuses cannot be changed here.</p>}
   </>;
 }
