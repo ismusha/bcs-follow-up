@@ -10,6 +10,7 @@ const NAV = [
   { to: "/view/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/view/schedule", label: "Cleaning Schedule", icon: ClipboardList },
   { to: "/view/project", label: "Project", icon: ClipboardCheck },
+  { to: "/view/payments", label: "Payment Checklist", icon: ClipboardCheck },
   { to: "/view/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/view/cleaners", label: "Cleaners", icon: Users },
 ] as const;
