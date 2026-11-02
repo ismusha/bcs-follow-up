@@ -59,7 +59,7 @@ export function PaymentChecklistPage() {
     mutationFn: async ({ company, isPaid }: { company: string; isPaid: boolean }) => {
       if (readOnly) throw new Error("This view is read-only.");
       const { error } = await supabase.from("monthly_company_payments").upsert(
-        { company_name: company, month: Number(month), year, is_paid: isPaid },
+        { company_name: company, month: Number(month), year: Number(year), is_paid: isPaid },
         { onConflict: "company_name,month,year" },
       );
       if (error) throw error;
@@ -72,11 +72,17 @@ export function PaymentChecklistPage() {
 
   return <>
     <PageHeader title="Payment Checklist" subtitle="Monthly payment status for the 16 companies." />
-    <div className="mb-5 max-w-xs">
+    <div className="mb-5 flex max-w-xs gap-3">
       <Select value={month} onValueChange={setMonth}>
         <SelectTrigger aria-label="Choose month"><SelectValue placeholder="Choose month" /></SelectTrigger>
         <SelectContent>
           {MONTHS.map((name, index) => <SelectItem key={name} value={String(index + 1)}>{name}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      <Select value={year} onValueChange={setYear}>
+        <SelectTrigger aria-label="Choose year"><SelectValue placeholder="Choose year" /></SelectTrigger>
+        <SelectContent>
+          {YEARS.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
         </SelectContent>
       </Select>
     </div>
