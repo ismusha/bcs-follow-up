@@ -44,7 +44,7 @@ describe("Internal cleaning assignment", () => {
   it("rejects finish times at or before the start time", () => {
     for (const end_time of ["08:00", "07:00"]) {
       expect(validateAssignment({ ...base, end_time }))
-        .toContain("Finish time must be after the start time.");
+        .toContain("Finish time must be after start time.");
   }
   });
 });

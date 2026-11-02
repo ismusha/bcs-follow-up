@@ -137,6 +137,27 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_company_payments: {
+        Row: {
+          company_name: string
+          is_paid: boolean
+          month: number
+          year: number
+        }
+        Insert: {
+          company_name: string
+          is_paid?: boolean
+          month: number
+          year: number
+        }
+        Update: {
+          company_name?: string
+          is_paid?: boolean
+          month?: number
+          year?: number
+        }
+        Relationships: []
+      }
       payment_checks: {
         Row: {
           appointment_id: string
@@ -159,27 +180,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      monthly_company_payments: {
-        Row: {
-          company_name: string
-          is_paid: boolean
-          month: number
-          year: number
-        }
-        Insert: {
-          company_name: string
-          is_paid?: boolean
-          month: number
-          year: number
-        }
-        Update: {
-          company_name?: string
-          is_paid?: boolean
-          month?: number
-          year?: number
-        }
-        Relationships: []
       }
       project_inspections: {
         Row: {
