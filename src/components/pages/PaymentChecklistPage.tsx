@@ -34,7 +34,7 @@ const MONTHS = [
 
 type MonthlyPayment = { company_name: string; month: number; year: number; is_paid: boolean };
 
-const YEARS = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 1 + i);
+const YEARS = Array.from({ length: 21 }, (_, i) => 2010 + i);
 
 export function PaymentChecklistPage() {
   const readOnly = useReadOnly();
