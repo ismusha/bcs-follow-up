@@ -15,6 +15,7 @@ export function isJobPast(
  */
 export function displayStatus(
   a: { date: string; end_date?: string; start_time?: string; end_time: string; status: AssignmentStatus },
+  _now = new Date(),
 ): AssignmentStatus {
   return a.status;
 }

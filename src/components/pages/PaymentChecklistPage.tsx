@@ -90,7 +90,7 @@ export function PaymentChecklistPage() {
               <span className="font-medium">{company}</span>
               <Button
                 variant={isPaid ? "outline" : "secondary"}
-                className={`min-w-28 shrink-0 ${isPaid ? "text-emerald-700" : ""}`}
+                 className={`min-w-28 shrink-0 ${isPaid ? "text-success" : ""}`}
                 disabled={readOnly || save.isPending}
                 onClick={() => save.mutate({ company, isPaid: !isPaid })}
               >
