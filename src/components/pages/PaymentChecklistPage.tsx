@@ -34,11 +34,13 @@ const MONTHS = [
 
 type MonthlyPayment = { company_name: string; month: number; year: number; is_paid: boolean };
 
+const YEARS = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 1 + i);
+
 export function PaymentChecklistPage() {
   const readOnly = useReadOnly();
   const qc = useQueryClient();
   const [month, setMonth] = useState(String(new Date().getMonth() + 1));
-  const year = new Date().getFullYear();
+  const [year, setYear] = useState(String(new Date().getFullYear()));
 
   const payments = useQuery({
     queryKey: ["monthly-company-payments", year, month],
@@ -46,7 +48,7 @@ export function PaymentChecklistPage() {
       const { data, error } = await supabase
         .from("monthly_company_payments")
         .select("company_name, month, year, is_paid")
-        .eq("year", year)
+        .eq("year", Number(year))
         .eq("month", Number(month));
       if (error) throw error;
       return data as MonthlyPayment[];
