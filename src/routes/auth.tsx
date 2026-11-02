@@ -20,7 +20,14 @@ export const Route = createFileRoute("/auth")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  loader: async () => ({ hasAccounts: await hasAnyAccounts() }),
+  loader: async () => {
+    try {
+      return { hasAccounts: await hasAnyAccounts() };
+    } catch {
+      // A connection failure must not expose first-owner setup or block viewers.
+      return { hasAccounts: true };
+    }
+  },
   component: AuthPage,
 });
 
@@ -39,10 +46,15 @@ function AuthPage() {
     setError("");
     if (!email.trim() || !password) return setError("Enter your email and password.");
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    setBusy(false);
-    if (error) return setError("Incorrect email or password.");
-    navigate({ to: "/dashboard" });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) return setError("Could not sign in. Check your email, password, and connection.");
+      await navigate({ to: "/dashboard" });
+    } catch {
+      setError("Could not connect. Check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function onSetup(e: React.FormEvent) {
