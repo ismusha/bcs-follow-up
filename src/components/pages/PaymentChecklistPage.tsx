@@ -34,11 +34,13 @@ const MONTHS = [
 
 type MonthlyPayment = { company_name: string; month: number; year: number; is_paid: boolean };
 
+const YEARS = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 1 + i);
+
 export function PaymentChecklistPage() {
   const readOnly = useReadOnly();
   const qc = useQueryClient();
   const [month, setMonth] = useState(String(new Date().getMonth() + 1));
-  const year = new Date().getFullYear();
+  const [year, setYear] = useState(String(new Date().getFullYear()));
 
   const payments = useQuery({
     queryKey: ["monthly-company-payments", year, month],
@@ -46,7 +48,7 @@ export function PaymentChecklistPage() {
       const { data, error } = await supabase
         .from("monthly_company_payments")
         .select("company_name, month, year, is_paid")
-        .eq("year", year)
+        .eq("year", Number(year))
         .eq("month", Number(month));
       if (error) throw error;
       return data as MonthlyPayment[];
@@ -57,7 +59,7 @@ export function PaymentChecklistPage() {
     mutationFn: async ({ company, isPaid }: { company: string; isPaid: boolean }) => {
       if (readOnly) throw new Error("This view is read-only.");
       const { error } = await supabase.from("monthly_company_payments").upsert(
-        { company_name: company, month: Number(month), year, is_paid: isPaid },
+        { company_name: company, month: Number(month), year: Number(year), is_paid: isPaid },
         { onConflict: "company_name,month,year" },
       );
       if (error) throw error;
@@ -70,11 +72,17 @@ export function PaymentChecklistPage() {
 
   return <>
     <PageHeader title="Payment Checklist" subtitle="Monthly payment status for the 16 companies." />
-    <div className="mb-5 max-w-xs">
+    <div className="mb-5 flex max-w-xs gap-3">
       <Select value={month} onValueChange={setMonth}>
         <SelectTrigger aria-label="Choose month"><SelectValue placeholder="Choose month" /></SelectTrigger>
         <SelectContent>
           {MONTHS.map((name, index) => <SelectItem key={name} value={String(index + 1)}>{name}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      <Select value={year} onValueChange={setYear}>
+        <SelectTrigger aria-label="Choose year"><SelectValue placeholder="Choose year" /></SelectTrigger>
+        <SelectContent>
+          {YEARS.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
         </SelectContent>
       </Select>
     </div>
