@@ -43,6 +43,13 @@
       "when": 1793601410054,
       "tag": "0005_monthly_company_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793701615536,
+      "tag": "0006_assign_staff_role_to_new_accounts",
+      "breakpoints": true
     }
   ]
 }
