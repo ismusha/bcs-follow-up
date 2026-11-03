@@ -25,6 +25,7 @@ const COMPANIES = [
   "Kifiya",
   "Hijra Bank",
   "Bank of Abyssinia",
+  "WFP",
 ] as const;
 
 const MONTHS = [
