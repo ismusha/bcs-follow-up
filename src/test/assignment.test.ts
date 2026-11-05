@@ -49,37 +49,32 @@ describe("Internal cleaning assignment", () => {
   });
 });
 
-describe("Assignment status remains staff-controlled", () => {
-  const now = new Date("2026-10-21T12:00:00");
+describe("Assignment status follows the clock", () => {
+  const job = { date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "11:00", status: "scheduled" as const };
 
-  it("keeps a scheduled job pending even after its finish date and time pass", () => {
-    expect(displayStatus({ date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "11:00", status: "scheduled" }, now))
-      .toBe("scheduled");
+  it("shows Upcoming before the start time", () => {
+    expect(displayStatus(job, new Date("2026-10-21T07:59:00"))).toBe("scheduled");
   });
 
-  it("keeps a multi-day job scheduled after its final day passes", () => {
-    const job = { date: "2026-10-20", end_date: "2026-10-21", start_time: "08:00", end_time: "13:00", status: "scheduled" as const };
-    expect(displayStatus(job, now)).toBe("scheduled");
-    expect(displayStatus(job, new Date("2026-10-22T13:00:00"))).toBe("scheduled");
+  it("shows Pending while the job is being done", () => {
+    expect(displayStatus(job, new Date("2026-10-21T09:00:00"))).toBe("in_progress");
   });
 
-  it("preserves an in-progress job even after its finish time passes", () => {
-    const job = { date: "2026-10-21", end_date: "", start_time: "08:00", end_time: "14:00", status: "in_progress" as const };
-    expect(displayStatus(job, now)).toBe("in_progress");
-    expect(displayStatus(job, new Date("2026-10-21T14:30:00"))).toBe("in_progress");
+  it("shows Completed once the finish time passes", () => {
+    expect(displayStatus(job, new Date("2026-10-21T11:00:00"))).toBe("completed");
   });
 
-  it("preserves a completed status when staff explicitly marks the job completed", () => {
-    expect(displayStatus({ date: "2026-10-20", end_date: "", start_time: "08:00", end_time: "11:00", status: "completed" }, now))
-      .toBe("completed");
+  it("keeps a multi-day job Pending until its final day's finish time", () => {
+    const multi = { ...job, end_date: "2026-10-23" };
+    expect(displayStatus(multi, new Date("2026-10-22T20:00:00"))).toBe("in_progress");
+    expect(displayStatus(multi, new Date("2026-10-23T11:00:00"))).toBe("completed");
   });
 
   it("never changes a cancelled job", () => {
-    expect(displayStatus({ date: "2026-10-20", end_date: "", start_time: "08:00", end_time: "11:00", status: "cancelled" }, now))
-      .toBe("cancelled");
+    expect(displayStatus({ ...job, status: "cancelled" }, new Date("2026-10-22T12:00:00"))).toBe("cancelled");
   });
 
-  it("still detects whether the scheduled finish time has passed for date calculations", () => {
-    expect(isJobPast({ date: "2026-10-21", end_date: "", end_time: "12:00" }, now)).toBe(true);
+  it("keeps a job staff marked Completed early", () => {
+    expect(displayStatus({ ...job, status: "completed" }, new Date("2026-10-21T07:00:00"))).toBe("completed");
   });
 });

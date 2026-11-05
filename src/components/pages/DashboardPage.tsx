@@ -19,7 +19,7 @@ export function DashboardPage() {
   const todays = appts.filter((a) => spansDay(a, today) && a.status !== "cancelled");
   const upcoming = appts.filter((a) => a.date > today && a.status !== "cancelled");
   const completed = appts.filter((a) => a.status === "completed").length;
-  const pending = appts.filter((a) => a.status === "scheduled" || a.status === "in_progress").length;
+  const pending = appts.filter((a) => a.status === "in_progress").length;
   const busyNow = new Set(
     todays.filter((a) => hhmm(a.start_time) <= now && hhmm(a.end_time) > now && a.status !== "completed").flatMap((a) => a.cleaner_ids),
   );

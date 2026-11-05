@@ -10,14 +10,18 @@ export function isJobPast(
 }
 
 /**
- * Status is controlled by staff, not by the calendar.
- * Jobs remain Pending/Scheduled until staff explicitly marks them Completed.
+ * Status follows the clock: before start = Upcoming ("scheduled"),
+ * between start and finish = Pending ("in_progress"), after finish = Completed.
+ * Cancelled jobs, and jobs staff marked Completed early, never change.
  */
 export function displayStatus(
   a: { date: string; end_date?: string; start_time?: string; end_time: string; status: AssignmentStatus },
-  _now = new Date(),
+  now = new Date(),
 ): AssignmentStatus {
-  return a.status;
+  if (a.status === "cancelled" || a.status === "completed") return a.status;
+  if (isJobPast(a, now)) return "completed";
+  const start = new Date(`${a.date}T${(a.start_time || "00:00").slice(0, 5)}:00`);
+  return start.getTime() <= now.getTime() ? "in_progress" : "scheduled";
 }
 
 export type AssignmentFields = {
