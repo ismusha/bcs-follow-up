@@ -26,6 +26,7 @@ const COMPANIES = [
   "Hijra Bank",
   "Bank of Abyssinia",
   "WFP",
+  "UNOCHA",
 ] as const;
 
 const MONTHS = [
@@ -72,7 +73,7 @@ export function PaymentChecklistPage() {
   const paidMap = new Map((payments.data ?? []).map((p) => [p.company_name, p.is_paid]));
 
   return <>
-    <PageHeader title="Payment Checklist" subtitle="Monthly payment status for the 17 companies." />
+    <PageHeader title="Payment Checklist" subtitle="Monthly payment status for the 18 companies." />
     <div className="mb-5 flex max-w-xs gap-3">
       <Select value={month} onValueChange={setMonth}>
         <SelectTrigger aria-label="Choose month"><SelectValue placeholder="Choose month" /></SelectTrigger>
